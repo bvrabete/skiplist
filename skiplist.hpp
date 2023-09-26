@@ -1,6 +1,11 @@
+#if !defined(__SKIP_LIST_HPP__)
+#define __SKIP_LIST_HPP__
+
 #include <forward_list>
 #include <list>
 #include <vector>
+#include <ctime>
+#include <cstdlib>
 
 template <typename T>
 class SkipListNode
@@ -14,6 +19,7 @@ template <typename T>
 class SkipListLevel
 {
 public:
+    using _SkipListLevelIterator = typename std::forward_list<SkipListNode<T> *>::iterator;
     std::forward_list<SkipListNode<T> *> level; // List of pointers to nodes in this level
 };
 
@@ -23,14 +29,19 @@ class SkipList
 protected:
     std::vector<SkipListLevel<T>> head;
 
-public:
-    SkipList(unsigned int max_level)
-    {
-        for (unsigned int i = 0; i < max_level; i++)
-        {
-            this->head.push_back(SkipListLevel<T>());
-        }
-    }
+    bool CoinFlip(SkipListNode<T> *) const;
+    bool AddElementAfterNode(T data, SkipListNode<T> *node);
+    SkipListNode<T> *FindNewElementPosition(T data);
 
-    bool AddNode(T data);
+public:
+    using SkipListHeadReverseIterator = typename std::vector<SkipListLevel<T>>::reverse_iterator;
+    using SkipListLevelIterator = typename SkipListLevel<T>::_SkipListLevelIterator;
+
+    bool AddElement(T data);
+    bool RemoveElement(T data);
+    SkipListNode<T> *Find(T data);
+
+    SkipList(int max_level);
 };
+
+#endif //! defined(__SKIP_LIST_HPP__)

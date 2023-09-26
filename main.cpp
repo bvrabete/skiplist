@@ -4,5 +4,18 @@
 
 int main(void)
 {
-    printf("Hello, world!\n");
+    const int MAX_LEVEL = 5;
+    const std::vector<long> data = {13, 22, 63, 4, 75};
+
+    SkipList<long> skiplist(static_cast<int>(MAX_LEVEL));
+
+    for (int i = 0; i < data.size(); i++)
+    {
+        if (!skiplist.AddElement(data[i]))
+        {
+            return i + 1;
+        }
+    }
+
+    return 0;
 }
