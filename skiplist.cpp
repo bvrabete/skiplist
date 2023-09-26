@@ -1,18 +1,6 @@
 #include "skiplist.hpp"
 
 template <typename T>
-SkipList<T>::SkipList(int max_level)
-{
-    for (unsigned int i = 0; i < max_level; i++)
-    {
-        head.push_back(SkipListLevel<T>());
-    }
-
-    // Initialise the random number generator
-    std::srand(std::time(nullptr));
-}
-
-template <typename T>
 bool SkipList<T>::AddElementAfterNode(T data, SkipListNode<T> *node)
 {
     if (node == nullptr)

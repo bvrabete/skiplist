@@ -41,7 +41,16 @@ public:
     bool RemoveElement(T data);
     SkipListNode<T> *Find(T data);
 
-    SkipList(int max_level);
+    SkipList(int max_level)
+    {
+        for (unsigned int i = 0; i < max_level; i++)
+        {
+            head.push_back(SkipListLevel<T>());
+        }
+
+        // Initialise the random number generator
+        std::srand(std::time(nullptr));
+    }
 };
 
 #endif //! defined(__SKIP_LIST_HPP__)

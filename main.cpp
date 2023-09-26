@@ -17,5 +17,7 @@ int main(void)
         }
     }
 
+    skiplist.RemoveElement(data[0]);
+
     return 0;
 }
