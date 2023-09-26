@@ -30,3 +30,24 @@
 *.exe
 *.out
 *.app
+
+
+# autoconf autotool temp filesfiles
+config.*
+*.cache/*
+configure*
+!configure.ac
+*.m4
+missing
+install-sh
+Makefile*
+!Makefile.am
+compile
+stamp-h1
+
+# dependecies
+depcomp
+.deps/*
+
+# output binary
+skiplist
