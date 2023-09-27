@@ -1,4 +1,58 @@
-#include "skiplist.hpp"
+#if !defined(__SKIP_LIST_HPP__)
+#define __SKIP_LIST_HPP__
+
+#include <forward_list>
+#include <list>
+#include <vector>
+#include <ctime>
+#include <cstdlib>
+#include <algorithm>
+
+template <typename T>
+class SkipListNode
+{
+public:
+    T data;
+    std::list<SkipListNode<T> *> vertical_navigation; // List of pointers to nodes in the next level
+};
+
+template <typename T>
+class SkipListLevel
+{
+public:
+    using _SkipListLevelIterator = typename std::forward_list<SkipListNode<T> *>::iterator;
+    std::forward_list<SkipListNode<T> *> level; // List of pointers to nodes in this level
+};
+
+template <typename T>
+class SkipList
+{
+protected:
+    std::vector<SkipListLevel<T>> head;
+
+    bool CoinFlip(SkipListNode<T> *) const;
+    bool AddElementAfterNode(T data, SkipListNode<T> *node);
+    SkipListNode<T> *FindNewElementPosition(T data);
+
+public:
+    using SkipListHeadReverseIterator = typename std::vector<SkipListLevel<T>>::reverse_iterator;
+    using SkipListLevelIterator = typename SkipListLevel<T>::_SkipListLevelIterator;
+
+    bool AddElement(T data);
+    bool RemoveElement(T data);
+    SkipListNode<T> *Find(T data);
+
+    SkipList(int max_level)
+    {
+        for (unsigned int i = 0; i < max_level; i++)
+        {
+            head.push_back(SkipListLevel<T>());
+        }
+
+        // Initialise the random number generator
+        std::srand(std::time(nullptr));
+    }
+};
 
 template <typename T>
 bool SkipList<T>::AddElementAfterNode(T data, SkipListNode<T> *node)
@@ -69,7 +123,24 @@ SkipListNode<T> *SkipList<T>::Find(T data)
 {
     // The level 0 holds all the list elements in the skiplist. Find the element in the skip
     // list means fiding the element in the first level
-    return head[0].level.find(data);
+
+    // Custom comparison function
+    auto compare = [](const SkipListNode<T> &node, const T &value)
+    {
+        return node.data < value;
+    };
+
+    // Binary search using custom comparison function
+    auto it = std::lower_bound(head[0].level.begin(), head[0].level.end(), data, compare);
+    // Check if the node with the specified data was found
+    if (it != head[0].level.end() && it->data == data)
+    {
+        return &(*it);
+    }
+    else
+    {
+        return nullptr;
+    }
 }
 
 /**
@@ -96,15 +167,10 @@ bool SkipList<T>::AddElement(T data)
         return false;
     }
 
-    SkipListNode<T> *newNode = new SkipListNode<T>(data);
-    if (newNode == nullptr)
-    {
-        // Failed to allocate memory for the new node
-        throw std::bad_alloc();
-    }
-
     SkipListNode<T> *position = FindNewElementPosition(data);
-    InsertAfterNode(newNode, position);
+    AddElementAfterNode(data, position);
 
     return true;
 }
+
+#endif //! defined(__SKIP_LIST_HPP__)

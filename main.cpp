@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "skiplist.hpp"
+#include "skiplist.h"
 
 int main(void)
 {
