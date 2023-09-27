@@ -20,7 +20,7 @@ template <typename T>
 class SkipListLevel
 {
 public:
-    using SkipListLevelType = typename std::forward_list<SkipListNode<T>*>;
+    using SkipListLevelType = typename std::forward_list<SkipListNode<T> *>;
     SkipListLevelType level; // List of pointers to nodes in this level
 };
 
@@ -32,6 +32,7 @@ public:
     using SkipListLevelIterator = typename SkipListLevel<T>::SkipListLevelType::iterator;
     using SkipListHeadType = typename std::vector<SkipListLevel<T>>;
     using SkipListHeadReverseIterator = typename SkipListHeadType::reverse_iterator;
+
 protected:
     SkipListHeadType head;
 
@@ -40,7 +41,6 @@ protected:
     SkipListNode<T> *FindNewElementPosition(T data);
 
 public:
-
     bool AddElement(T data);
     bool RemoveElement(T data);
     bool Find(T data);
@@ -57,6 +57,16 @@ public:
     }
 };
 
+/**
+ * Adds an element after a given node in the SkipList.
+ *
+ * @param data The data to be added.
+ * @param node The node after which the element should be added. If `nullptr`, the element will be added to the first column of the skiplist.
+ *
+ * @return `true` if the element is successfully added.
+ *
+ * @throws None.
+ */
 template <typename T>
 bool SkipList<T>::AddElementAfterNode(T data, SkipListNode<T> *node)
 {
@@ -69,20 +79,25 @@ bool SkipList<T>::AddElementAfterNode(T data, SkipListNode<T> *node)
     return true;
 }
 
+/**
+ * Find the position of a new element in the SkipList.
+ *
+ * @param data the data of the new element
+ *
+ * @return a pointer to the SkipListNode representing the position of the new element
+ *
+ * @throws None
+ */
 template <typename T>
 SkipListNode<T> *SkipList<T>::FindNewElementPosition(T data)
 {
-    // Element not in the list. Find the element position
-
-    for (SkipListHeadReverseIterator head_it = head.rbegin(); head_it != head.rend(); ++head_it)
+    for (auto head_it = head.rbegin(); head_it != head.rend(); ++head_it)
     {
-        // Search for the element in the current level
-        for (SkipListLevelIterator it = head_it->level.begin(); it != head_it->level.end(); ++it)
+        for (auto it = head_it->level.begin(); it != head_it->level.end(); ++it)
         {
-            if (*it.data <= data)
+            if ((*it)->data <= data)
             {
-                // Element found. Insert after it
-                return it->;
+                return *it;
             }
         }
     }
@@ -102,7 +117,7 @@ SkipListNode<T> *SkipList<T>::FindNewElementPosition(T data)
 template <typename T>
 bool SkipList<T>::RemoveElement(T data)
 {
-    if (Find(data) )
+    if (Find(data))
     {
         // Element not in the list. Nothing to remove
         return true;
@@ -122,20 +137,21 @@ bool SkipList<T>::RemoveElement(T data)
  * @throws None
  */
 template <typename T>
- bool SkipList<T>::Find(T data)
+bool SkipList<T>::Find(T data)
 {
     // The level 0 holds all the list elements in the skiplist. Find the element in the skip
     // list means fiding the element in the first level
 
     // Custom comparison function
-    auto compare = [](const SkipListNode<T> &node, const T &value)
+    auto compare = [](const SkipListNode<T> *node, const T &value)
     {
-        return node.data < value;
+        return node->data < value;
     };
 
     // Binary search using custom comparison function
-    return std::binary_search(head[0].level.begin(), head[0].level.end(), data, compare);
-    
+    auto it = std::lower_bound(head[0].level.begin(), head[0].level.end(), data, compare);
+    // Check if the element was found
+    return it != head[0].level.end() && (*it)->data == data;
 }
 
 /**
@@ -153,6 +169,15 @@ bool SkipList<T>::CoinFlip(SkipListNode<T> *) const
     return static_cast<bool>(std::rand() % 2);
 }
 
+/**
+ * Adds an element to the SkipList.
+ *
+ * @param data the data to be added to the SkipList
+ *
+ * @return true if the element was successfully added, false if the element already exists in the list
+ *
+ * @throws None
+ */
 template <typename T>
 bool SkipList<T>::AddElement(T data)
 {

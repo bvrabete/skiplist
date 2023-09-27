@@ -54,3 +54,4 @@ skiplist
 /x64/Debug
 /skiplist.vcxproj.filters
 /skiplist.vcxproj.user
+testskiplist
