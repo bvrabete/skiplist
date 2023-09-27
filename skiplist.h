@@ -20,37 +20,40 @@ template <typename T>
 class SkipListLevel
 {
 public:
-    using _SkipListLevelIterator = typename std::forward_list<SkipListNode<T> *>::iterator;
-    std::forward_list<SkipListNode<T> *> level; // List of pointers to nodes in this level
+    using SkipListLevelType = typename std::forward_list<SkipListNode<T>*>;
+    SkipListLevelType level; // List of pointers to nodes in this level
 };
 
 template <typename T>
 class SkipList
 {
+
+public:
+    using SkipListLevelIterator = typename SkipListLevel<T>::SkipListLevelType::iterator;
+    using SkipListHeadType = typename std::vector<SkipListLevel<T>>;
+    using SkipListHeadReverseIterator = typename SkipListHeadType::reverse_iterator;
 protected:
-    std::vector<SkipListLevel<T>> head;
+    SkipListHeadType head;
 
     bool CoinFlip(SkipListNode<T> *) const;
     bool AddElementAfterNode(T data, SkipListNode<T> *node);
     SkipListNode<T> *FindNewElementPosition(T data);
 
 public:
-    using SkipListHeadReverseIterator = typename std::vector<SkipListLevel<T>>::reverse_iterator;
-    using SkipListLevelIterator = typename SkipListLevel<T>::_SkipListLevelIterator;
 
     bool AddElement(T data);
     bool RemoveElement(T data);
-    SkipListNode<T> *Find(T data);
+    bool Find(T data);
 
     SkipList(int max_level)
     {
-        for (unsigned int i = 0; i < max_level; i++)
+        for (int i = 0; i < max_level; i++)
         {
             head.push_back(SkipListLevel<T>());
         }
 
         // Initialise the random number generator
-        std::srand(std::time(nullptr));
+        std::srand(static_cast<int>(std::time(nullptr)));
     }
 };
 
@@ -76,10 +79,10 @@ SkipListNode<T> *SkipList<T>::FindNewElementPosition(T data)
         // Search for the element in the current level
         for (SkipListLevelIterator it = head_it->level.begin(); it != head_it->level.end(); ++it)
         {
-            if (it->data <= data)
+            if (*it.data <= data)
             {
                 // Element found. Insert after it
-                return it;
+                return it->;
             }
         }
     }
@@ -99,7 +102,7 @@ SkipListNode<T> *SkipList<T>::FindNewElementPosition(T data)
 template <typename T>
 bool SkipList<T>::RemoveElement(T data)
 {
-    if (Find(data) == nullptr)
+    if (Find(data) )
     {
         // Element not in the list. Nothing to remove
         return true;
@@ -119,7 +122,7 @@ bool SkipList<T>::RemoveElement(T data)
  * @throws None
  */
 template <typename T>
-SkipListNode<T> *SkipList<T>::Find(T data)
+ bool SkipList<T>::Find(T data)
 {
     // The level 0 holds all the list elements in the skiplist. Find the element in the skip
     // list means fiding the element in the first level
@@ -131,16 +134,8 @@ SkipListNode<T> *SkipList<T>::Find(T data)
     };
 
     // Binary search using custom comparison function
-    auto it = std::lower_bound(head[0].level.begin(), head[0].level.end(), data, compare);
-    // Check if the node with the specified data was found
-    if (it != head[0].level.end() && it->data == data)
-    {
-        return &(*it);
-    }
-    else
-    {
-        return nullptr;
-    }
+    return std::binary_search(head[0].level.begin(), head[0].level.end(), data, compare);
+    
 }
 
 /**
@@ -161,7 +156,7 @@ bool SkipList<T>::CoinFlip(SkipListNode<T> *) const
 template <typename T>
 bool SkipList<T>::AddElement(T data)
 {
-    if (Find(data) != nullptr)
+    if (Find(data))
     {
         // Element already exists in the list. Nothing to insert
         return false;
