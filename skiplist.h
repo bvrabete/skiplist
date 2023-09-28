@@ -13,7 +13,8 @@ class SkipListNode
 {
 public:
     T data;
-    std::list<SkipListNode<T> *> vertical_navigation; // List of pointers to nodes in the next level
+    std::vector<SkipListNode<T> *> vertical_navigation; // List of pointers to nodes in the next level
+    SkipListNode(int max_level) { vertical_navigation.resize(max_level); }
 };
 
 template <typename T>
@@ -35,6 +36,7 @@ public:
 
 protected:
     SkipListHeadType head;
+    // bool isEmpty();
 
     bool CoinFlip(SkipListNode<T> *) const;
     bool AddElementAfterNode(T data, SkipListNode<T> *node);
@@ -45,6 +47,8 @@ public:
     bool RemoveElement(T data);
     bool Find(T data);
 
+    int list_max_level;
+
     SkipList(int max_level)
     {
         for (int i = 0; i < max_level; i++)
@@ -54,6 +58,8 @@ public:
 
         // Initialise the random number generator
         std::srand(static_cast<int>(std::time(nullptr)));
+
+        list_max_level = max_level;
     }
 };
 
@@ -91,18 +97,45 @@ bool SkipList<T>::AddElementAfterNode(T data, SkipListNode<T> *node)
 template <typename T>
 SkipListNode<T> *SkipList<T>::FindNewElementPosition(T data)
 {
+    SkipListNode<T> *element = nullptr;
+
+    int level_id = head.size() - 1;
+
     for (auto head_it = head.rbegin(); head_it != head.rend(); ++head_it)
     {
-        for (auto it = head_it->level.begin(); it != head_it->level.end(); ++it)
+        auto start = head_it->level.begin();
+
+        for (auto it = start; it != head_it->level.end(); ++it)
         {
             if ((*it)->data <= data)
             {
-                return *it;
+                element = *it;
+                start = element->vertical_navigation[level_id];
+                break;
             }
         }
+
+        level_id--;
     }
 
-    return nullptr;
+    if (element == nullptr)
+    {
+        // Empty list
+        // Add data to each level on the first position
+        SkipListNode<T> *node = new SkipListNode<T>(list_max_level);
+
+        for (auto head_it = head.rbegin(); head_it != head.rend(); ++head_it)
+        {
+            SkipListNode<T> *it = head_it->level.push_front(node);
+            node->vertical_navigation[0] = it;
+        }
+
+        return node;
+    }
+
+    // Element position found
+
+    return element;
 }
 
 /**

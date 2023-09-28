@@ -55,3 +55,7 @@ skiplist
 /skiplist.vcxproj.filters
 /skiplist.vcxproj.user
 testskiplist
+
+CMakeFiles/*
+*.cmake
+CMakeCache.txt
