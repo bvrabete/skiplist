@@ -9,13 +9,7 @@
 #include <algorithm>
 
 template <typename T>
-class SkipListNode
-{
-public:
-    T data;
-    std::vector<SkipListNode<T> *> vertical_navigation; // List of pointers to nodes in the next level
-    SkipListNode(int max_level) { vertical_navigation.resize(max_level); }
-};
+class SkipListNode;
 
 template <typename T>
 class SkipListLevel
@@ -26,11 +20,20 @@ public:
 };
 
 template <typename T>
+class SkipListNode
+{
+public:
+    T data;
+    using SkipListLevelIterator = typename SkipListLevel<T>::SkipListLevelType::iterator;
+    std::vector<SkipListLevelIterator> vertical_navigation; // List of pointers to nodes in the next level
+    SkipListNode(int max_level) { vertical_navigation.resize(max_level); }
+};
+
+template <typename T>
 class SkipList
 {
 
 public:
-    using SkipListLevelIterator = typename SkipListLevel<T>::SkipListLevelType::iterator;
     using SkipListHeadType = typename std::vector<SkipListLevel<T>>;
     using SkipListHeadReverseIterator = typename SkipListHeadType::reverse_iterator;
 
@@ -118,20 +121,20 @@ SkipListNode<T> *SkipList<T>::FindNewElementPosition(T data)
         level_id--;
     }
 
-    if (element == nullptr)
-    {
-        // Empty list
-        // Add data to each level on the first position
-        SkipListNode<T> *node = new SkipListNode<T>(list_max_level);
+    // if (element == nullptr)
+    // {
+    //     // Empty list
+    //     // Add data to each level on the first position
+    //     SkipListNode<T> *node = new SkipListNode<T>(list_max_level);
 
-        for (auto head_it = head.rbegin(); head_it != head.rend(); ++head_it)
-        {
-            SkipListNode<T> *it = head_it->level.push_front(node);
-            node->vertical_navigation[0] = it;
-        }
+    //     for (auto head_it = head.rbegin(); head_it != head.rend(); ++head_it)
+    //     {
+    //         SkipListNode<T> *it = head_it->level.push_front(node);
+    //         node->vertical_navigation[0] = it;
+    //     }
 
-        return node;
-    }
+    //     return node;
+    // }
 
     // Element position found
 
