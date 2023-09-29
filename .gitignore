@@ -59,3 +59,4 @@ testskiplist
 CMakeFiles/*
 *.cmake
 CMakeCache.txt
+out/*

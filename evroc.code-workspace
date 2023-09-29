@@ -10,7 +10,8 @@
             "cpp",
             "cmake"
         ],
-        "cmake.useCMakePresets": "always"
+        "cmake.useCMakePresets": "always",
+        "cmake.sourceDirectory": "${workspaceFolder}",
     },
     "launch": {
         "version": "0.2.0",

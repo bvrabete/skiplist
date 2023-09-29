@@ -1,5 +1,10 @@
 {
-    "version": 2,
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 19,
+        "patch": 0
+    },
     "configurePresets": [
         {
             "name": "gcc12",
@@ -11,6 +16,12 @@
                 "CMAKE_C_COMPILER": "/usr/bin/gcc-12",
                 "CMAKE_BUILD_TYPE": "Debug"
             }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "gcc12",
+            "configurePreset": "gcc12"
         }
     ]
 }
