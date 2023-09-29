@@ -12,6 +12,7 @@
         ],
         "cmake.useCMakePresets": "always",
         "cmake.sourceDirectory": "${workspaceFolder}",
+        "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
     },
     "launch": {
         "version": "0.2.0",
