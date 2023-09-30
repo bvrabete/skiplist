@@ -55,6 +55,6 @@ public:
     SkipList(int max_level);
 };
 
-#include "skiplist.cpp"
+#include "skiplist.tpp"
 
 #endif //! defined(__SKIP_LIST_HPP__)

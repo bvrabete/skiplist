@@ -2,7 +2,7 @@
 #if !defined(__SKIP_LIST_CPP__)
 #define __SKIP_LIST_CPP__
 
-#include "skiplist.h"
+#include "skiplist.hpp"
 
 template <typename T>
 SkipList<T>::SkipList(int max_level)
