@@ -2,11 +2,24 @@
 #if !defined(__SKIP_LIST_CPP__)
 #define __SKIP_LIST_CPP__
 
+#include <stdexcept>
+#include <string>
+#include <iomanip>
+
 #include "skiplist.hpp"
 
 template <typename T>
 SkipList<T>::SkipList(int max_level)
 {
+    if (max_level < 2)
+    {
+
+        // Head is empty
+        // Throw an exception
+        throw std::runtime_error(std::string("Incorrect head level size"));
+    }
+
+    // Initialise the head
     for (int i = 0; i < max_level; i++)
     {
         head.push_back(SkipListLevel<T>());
@@ -16,6 +29,25 @@ SkipList<T>::SkipList(int max_level)
     std::srand(static_cast<int>(std::time(nullptr)));
 
     list_max_level = max_level;
+}
+
+template <typename T>
+SkipList<T>::~SkipList()
+{
+    // Delete the node data using the pointers from the first level
+
+    for (auto it = head[0].level.begin(); it != head[0].level.end(); ++it)
+    {
+        delete (*it);
+    }
+
+    // Remove all elements from each level
+    for (auto head_it = head.begin(); head_it != head.end(); ++head_it)
+    {
+        head_it->level.clear();
+    }
+
+    head.clear();
 }
 
 /**
@@ -33,7 +65,21 @@ bool SkipList<T>::AddElementAfterNode(T data, SkipListNode<T> *node)
 {
     if (node == nullptr)
     {
-        // Element needs to be added to the first column of the skiplist
+        // Empty list
+        // Add data to each level on the first position
+        SkipListNode<T> *newNode = new SkipListNode<T>(list_max_level);
+        newNode->data = data;
+
+        auto v_nav_it = newNode->vertical_navigation.begin();
+
+        for (auto head_it = head.begin(); head_it != head.end(); ++head_it)
+        {
+            (*head_it).level.push_front(newNode);
+
+            *(v_nav_it) = (*head_it).level.begin();
+            ++v_nav_it;
+        }
+
         return true;
     }
 
@@ -56,6 +102,13 @@ SkipListNode<T> *SkipList<T>::FindNewElementPosition(T data)
 
     int level_id = head.size() - 1;
 
+    if (level_id < 0)
+    {
+        // Head is empty
+        // Throw an exception
+        throw std::runtime_error(std::string("Incorrect head level size"));
+    }
+
     for (auto head_it = head.rbegin(); head_it != head.rend(); ++head_it)
     {
         auto start = head_it->level.begin();
@@ -72,21 +125,6 @@ SkipListNode<T> *SkipList<T>::FindNewElementPosition(T data)
 
         level_id--;
     }
-
-    // if (element == nullptr)
-    // {
-    //     // Empty list
-    //     // Add data to each level on the first position
-    //     SkipListNode<T> *node = new SkipListNode<T>(list_max_level);
-
-    //     for (auto head_it = head.rbegin(); head_it != head.rend(); ++head_it)
-    //     {
-    //         SkipListNode<T> *it = head_it->level.push_front(node);
-    //         node->vertical_navigation[0] = it;
-    //     }
-
-    //     return node;
-    // }
 
     // Element position found
 
@@ -179,6 +217,26 @@ bool SkipList<T>::AddElement(T data)
     AddElementAfterNode(data, position);
 
     return true;
+}
+
+template <typename T>
+void SkipList<T>::Print()
+{
+    std::cout << std::endl;
+    std::cout << "List content begin" << std::endl;
+
+    for (int i = list_max_level - 1; i >= 0; i--)
+    {
+        std::cout << "Level " << std::setw(3) << std::setfill('0') << i << ": ";
+
+        for (auto it = head[i].level.begin(); it != head[i].level.end(); ++it)
+        {
+            std::cout << (*it)->data << " ";
+        }
+        std::cout << std::endl;
+    }
+    std::cout << "List content end" << std::endl;
+    std::cout << std::endl;
 }
 
 #endif //! defined(__SKIP_LIST_CPP__)

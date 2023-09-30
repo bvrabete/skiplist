@@ -12,7 +12,26 @@
         ],
         "cmake.useCMakePresets": "always",
         "cmake.sourceDirectory": "${workspaceFolder}",
-        "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
+        "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+        "files.associations": {
+            "*.gradle": "gradle",
+            "*.tpp": "cpp",
+            "array": "cpp",
+            "atomic": "cpp",
+            "cwchar": "cpp",
+            "forward_list": "cpp",
+            "exception": "cpp",
+            "iterator": "cpp",
+            "initializer_list": "cpp",
+            "iosfwd": "cpp",
+            "new": "cpp",
+            "ostream": "cpp",
+            "stdexcept": "cpp",
+            "streambuf": "cpp",
+            "tuple": "cpp",
+            "type_traits": "cpp",
+            "utility": "cpp"
+        }
     },
     "launch": {
         "version": "0.2.0",

@@ -27,6 +27,7 @@ public:
     using SkipListLevelIterator = typename SkipListLevel<T>::SkipListLevelType::iterator;
     std::vector<SkipListLevelIterator> vertical_navigation; // List of pointers to nodes in the next level
     SkipListNode(int max_level) { vertical_navigation.resize(max_level); }
+    ~SkipListNode() { vertical_navigation.clear(); }
 };
 
 template <typename T>
@@ -39,7 +40,7 @@ public:
 
 protected:
     SkipListHeadType head;
-    // bool isEmpty();
+    int list_max_level;
 
     bool CoinFlip(SkipListNode<T> *) const;
     bool AddElementAfterNode(T data, SkipListNode<T> *node);
@@ -50,9 +51,10 @@ public:
     bool RemoveElement(T data);
     bool Find(T data);
 
-    int list_max_level;
+    void Print();
 
     SkipList(int max_level);
+    ~SkipList();
 };
 
 #include "skiplist.tpp"

@@ -15,6 +15,8 @@ int main(void)
         {
             return i + 1;
         }
+
+        skiplist.Print();
     }
 
     skiplist.RemoveElement(data[0]);
