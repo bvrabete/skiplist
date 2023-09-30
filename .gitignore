@@ -30,6 +30,7 @@
 *.exe
 *.out
 *.app
+sparse_list
 
 
 # autoconf autotool temp filesfiles
@@ -49,17 +50,18 @@ stamp-h1
 depcomp
 .deps/*
 
-# output binary
-skiplist
+# output binaries
 /x64/Debug
 /skiplist.vcxproj.filters
 /skiplist.vcxproj.user
-testskiplist
 
+# cmake generated files
 CMakeFiles/*
 *.cmake
 CMakeCache.txt
 out/*
 
+# Visual Studio and Visual Studio Code
 .vs/*
 .vscode/*
+
