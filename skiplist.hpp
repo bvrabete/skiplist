@@ -11,11 +11,18 @@
 template <typename T>
 class SkipListNode;
 
+// Custom comparison function
+template <typename T>
+auto compare = [](const SkipListNode<T> *node, const T &value)
+{
+    return node->data < value;
+};
+
 template <typename T>
 class SkipListLevel
 {
 public:
-    using SkipListLevelType = typename std::forward_list<SkipListNode<T> *>;
+    using SkipListLevelType = typename std::list<SkipListNode<T> *>;
     SkipListLevelType level; // List of pointers to nodes in this level
 };
 
@@ -26,7 +33,7 @@ public:
     T data;
     using SkipListLevelIterator = typename SkipListLevel<T>::SkipListLevelType::iterator;
     std::vector<SkipListLevelIterator> vertical_navigation; // List of pointers to nodes in the next level
-    SkipListNode(int max_level) { vertical_navigation.resize(max_level); }
+    SkipListNode(T _data) : data(_data){};
     ~SkipListNode() { vertical_navigation.clear(); }
 };
 
