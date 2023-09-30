@@ -13,7 +13,7 @@ class SkipListNode;
 
 // Custom comparison function
 template <typename T>
-auto compare = [](const SkipListNode<T> *node, const T &value)
+bool custom_compare(const SkipListNode<T> *node, const T &value)
 {
     return node->data < value;
 };
@@ -44,6 +44,7 @@ class SkipList
 public:
     using SkipListHeadType = typename std::vector<SkipListLevel<T>>;
     using SkipListHeadReverseIterator = typename SkipListHeadType::reverse_iterator;
+    using SkipListLevelIterator = typename SkipListNode<T>::SkipListLevelIterator;
 
 protected:
     SkipListHeadType head;
@@ -51,7 +52,7 @@ protected:
 
     bool CoinFlip(SkipListNode<T> *) const;
     bool AddElementAfterNode(T data, SkipListNode<T> *node);
-    SkipListNode<T> *FindNewElementPosition(T data);
+    SkipListLevelIterator FindNewElementPosition(T data);
 
 public:
     bool AddElement(T data);

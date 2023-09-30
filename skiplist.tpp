@@ -67,7 +67,7 @@ bool SkipList<T>::AddElementAfterNode(T data, SkipListNode<T> *node)
 
     if (node == nullptr)
     {
-        // Empty list
+        // Add this element at the beginning
         // Add data to each level on the first position
 
         for (auto head_it = head.begin(); head_it != head.end(); ++head_it)
@@ -97,6 +97,9 @@ bool SkipList<T>::AddElementAfterNode(T data, SkipListNode<T> *node)
     return true;
 }
 
+template <typename T>
+using SkipListLevelIterator = typename SkipListNode<T>::SkipListLevelIterator;
+
 /**
  * Find the position of a new element in the SkipList.
  *
@@ -107,7 +110,7 @@ bool SkipList<T>::AddElementAfterNode(T data, SkipListNode<T> *node)
  * @throws None
  */
 template <typename T>
-SkipListNode<T> *SkipList<T>::FindNewElementPosition(T data)
+SkipListLevelIterator<T> SkipList<T>::FindNewElementPosition(T data)
 {
     int level_id = head.size() - 1;
     if (level_id < 0)
@@ -117,7 +120,7 @@ SkipListNode<T> *SkipList<T>::FindNewElementPosition(T data)
         throw std::runtime_error(std::string("Incorrect head level size"));
     }
 
-    SkipListNode<T> *insertAfter = nullptr;
+    SkipListLevelIterator insertAfter = head.back().level.begin();
 
     // Start searching from the last level
 
@@ -125,34 +128,29 @@ SkipListNode<T> *SkipList<T>::FindNewElementPosition(T data)
 
     for (auto head_it = head.rbegin(); head_it != head.rend(); ++head_it)
     {
-        // for each level
-        insertAfter = nullptr;
+        // for each level, find the position of the new element
 
         if (head_it->level.size() > 0)
         {
-            auto it = std::lower_bound(start, head_it->level.end(), data, compare<T>);
+            auto it = std::lower_bound(start, head_it->level.end(), data, custom_compare<T>);
 
-            if (it != head_it->level.end())
-            {
-                insertAfter = *it;
-            }
-            else
-            {
-                insertAfter = head_it->level.back();
-            }
+            // if (it != head_it->level.end())
+            // {
+            insertAfter = it;
+            // }
         }
 
-        if (!insertAfter)
-        {
-            // the new element is smaller than all the other elements in the list
+        // if (!insertAfter)
+        // {
+        //     // the new element is larger than all the other elements in the list
 
-            // Stop here and add it to the beginning of the list
-            break;
-        }
+        //     // Stop here and add it to the beginning of the list
+        //     break;
+        // }
 
         if (level_id > 0)
         {
-            start = insertAfter->vertical_navigation[level_id - 1]; // or next element from here?
+            start = (*insertAfter)->vertical_navigation[level_id - 1]; // or next element from here?
         }
 
         level_id--;
@@ -201,7 +199,7 @@ bool SkipList<T>::Find(T data)
     // list means fiding the element in the first level
 
     // Binary search using custom comparison function
-    auto it = std::lower_bound(head[0].level.begin(), head[0].level.end(), data, compare<T>);
+    auto it = std::lower_bound(head[0].level.begin(), head[0].level.end(), data, custom_compare<T>);
     // Check if the element was found
     return it != head[0].level.end() && (*it)->data == data;
 }
@@ -239,9 +237,12 @@ bool SkipList<T>::AddElement(T data)
         return false;
     }
 
-    SkipListNode<T> *position = FindNewElementPosition(data);
-    if (position)
+    auto it = FindNewElementPosition(data);
+    SkipListNode<T> *position = nullptr;
+
+    if (it != head[0].level.begin())
     {
+        position = *std::prev(it);
         std::cout << "Inserting " << data << " after " << position->data << std::endl;
     }
     else
