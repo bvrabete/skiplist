@@ -92,7 +92,10 @@ bool SkipList<T>::AddElementAfterPosition(T data, SkipListLevelIterator position
             break;
         }
 
-        // newNode->vertical_navigation.push_back(head[i].level.begin());
+        // Add data to next level. Need to find the right position
+        auto it = std::lower_bound(head[i].level.begin(), head[i].level.end(), data, custom_compare<T>);
+        auto level_iterator = head[i].level.insert(it, newNode);
+        newNode->vertical_navigation.push_back(level_iterator);
     }
 
     return true;
@@ -241,7 +244,7 @@ bool SkipList<T>::AddElement(T data)
     {
         if (position == head[0].level.end())
         {
-            std::cout << "Inserting " << data << " after " << (*std::prev(position))->data << std::endl;
+            std::cout << "Inserting " << data << " at the end" << std::endl;
         }
         else
         {
