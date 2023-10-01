@@ -30,3 +30,38 @@
 *.exe
 *.out
 *.app
+skip_list
+
+
+# autoconf autotool temp filesfiles
+config.*
+*.cache/*
+configure*
+!configure.ac
+*.m4
+missing
+install-sh
+Makefile*
+!Makefile.am
+compile
+stamp-h1
+
+# dependecies
+depcomp
+.deps/*
+
+# output binaries
+/x64/Debug
+/skiplist.vcxproj.filters
+/skiplist.vcxproj.user
+
+# cmake generated files
+CMakeFiles/*
+*.cmake
+CMakeCache.txt
+out/*
+
+# Visual Studio and Visual Studio Code
+.vs/*
+.vscode/*
+
