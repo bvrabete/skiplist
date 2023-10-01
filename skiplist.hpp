@@ -57,7 +57,7 @@ protected:
 public:
     bool AddElement(T data);
     bool RemoveElement(T data);
-    bool Find(T data);
+    SkipListLevelIterator Find(T data);
 
     void Print();
 
