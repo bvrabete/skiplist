@@ -1,4 +1,4 @@
-# Skip List implmenentation
+# Skip List implementation
 
 ## How to compile
 
