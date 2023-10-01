@@ -9,12 +9,13 @@
 #include "skiplist.hpp"
 
 template <typename T>
+using SkipListLevelIterator = typename SkipListNode<T>::SkipListLevelIterator;
+
+template <typename T>
 SkipList<T>::SkipList(int max_level)
 {
     if (max_level < 2)
     {
-
-        // Head is empty
         // Throw an exception
         throw std::runtime_error(std::string("Incorrect head level size"));
     }
@@ -61,11 +62,11 @@ SkipList<T>::~SkipList()
  * @throws None.
  */
 template <typename T>
-bool SkipList<T>::AddElementAfterNode(T data, SkipListNode<T> *node)
+bool SkipList<T>::AddElementAfterPosition(T data, SkipListLevelIterator position)
 {
     SkipListNode<T> *newNode = new SkipListNode<T>(data);
 
-    if (node == nullptr)
+    if (position == head[0].level.begin())
     {
         // Add this element at the beginning
         // Add data to each level on the first position
@@ -80,12 +81,12 @@ bool SkipList<T>::AddElementAfterNode(T data, SkipListNode<T> *node)
         return true;
     }
 
-    auto it = head[0].level.insert(std::next(node->vertical_navigation[0]), newNode);
+    auto it = head[0].level.insert(position, newNode);
     newNode->vertical_navigation.push_back(it);
 
     for (int i = 1; i < list_max_level; i++)
     {
-        if (!CoinFlip(node))
+        if (!CoinFlip(newNode))
         {
             // Stop adding levels
             break;
@@ -96,9 +97,6 @@ bool SkipList<T>::AddElementAfterNode(T data, SkipListNode<T> *node)
 
     return true;
 }
-
-template <typename T>
-using SkipListLevelIterator = typename SkipListNode<T>::SkipListLevelIterator;
 
 /**
  * Find the position of a new element in the SkipList.
@@ -134,30 +132,30 @@ SkipListLevelIterator<T> SkipList<T>::FindNewElementPosition(T data)
         {
             auto it = std::lower_bound(start, head_it->level.end(), data, custom_compare<T>);
 
-            // if (it != head_it->level.end())
-            // {
             insertAfter = it;
-            // }
+
+            if (level_id > 0)
+            {
+                if (insertAfter == head_it->level.end())
+                {
+                    // Element not found on this level. Need to start with the previous element's next level
+                    start = (*std::prev(insertAfter))->vertical_navigation[level_id - 1];
+                }
+                else
+                {
+                    start = (*insertAfter)->vertical_navigation[level_id - 1];
+                }
+            }
         }
-
-        // if (!insertAfter)
-        // {
-        //     // the new element is larger than all the other elements in the list
-
-        //     // Stop here and add it to the beginning of the list
-        //     break;
-        // }
-
-        if (level_id > 0)
+        else
         {
-            start = (*insertAfter)->vertical_navigation[level_id - 1]; // or next element from here?
+            insertAfter = head_it->level.begin();
+            start = std::next(head_it)->level.begin();
         }
 
         level_id--;
     }
 
-    // if element is nullptr, then the list is empty or the new element needs to be added as
-    // the first element in the list
     return insertAfter;
 }
 
@@ -237,20 +235,25 @@ bool SkipList<T>::AddElement(T data)
         return false;
     }
 
-    auto it = FindNewElementPosition(data);
-    SkipListNode<T> *position = nullptr;
+    auto position = FindNewElementPosition(data);
 
-    if (it != head[0].level.begin())
+    if (position != head[0].level.begin())
     {
-        position = *std::prev(it);
-        std::cout << "Inserting " << data << " after " << position->data << std::endl;
+        if (position == head[0].level.end())
+        {
+            std::cout << "Inserting " << data << " after " << (*std::prev(position))->data << std::endl;
+        }
+        else
+        {
+            std::cout << "Inserting " << data << " after " << (*position)->data << std::endl;
+        }
     }
     else
     {
         std::cout << "Inserting " << data << " at the beginning" << std::endl;
     }
 
-    return AddElementAfterNode(data, position);
+    return AddElementAfterPosition(data, position);
 }
 
 template <typename T>

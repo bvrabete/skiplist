@@ -5,7 +5,7 @@
 int main(void)
 {
     const int MAX_LEVEL = 5;
-    const std::vector<long> data = {13, 22, 63, 4, 75};
+    const std::vector<long> data = {13, 63, 22, 4, 75};
 
     SkipList<long> skiplist(static_cast<int>(MAX_LEVEL));
 

@@ -13,8 +13,14 @@
         "cmake.useCMakePresets": "always",
         "cmake.sourceDirectory": "${workspaceFolder}",
         "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+        "cmake.configureOnOpen": true,
+        "[cpp]": {
+            "editor.formatOnSave": true,
+            "editor.wordBasedSuggestions": false,
+            "editor.suggest.insertMode": "replace",
+            "editor.semanticHighlighting.enabled": true
+        },
         "files.associations": {
-            "*.gradle": "gradle",
             "*.tpp": "cpp",
             "array": "cpp",
             "atomic": "cpp",

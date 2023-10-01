@@ -4,8 +4,8 @@ project(skip_list)
 
 include_directories(".")
 
-file(GLOB SOURCES "*.cpp")
+file(GLOB SOURCES "*.cpp" "*.tpp")
 
 add_executable(skip_list ${SOURCES})
 
-set_property(TARGET skip_list PROPERTY CXX_STANDARD 17)
+set_property(TARGET skip_list PROPERTY CXX_STANDARD 20)

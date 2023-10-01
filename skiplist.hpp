@@ -51,7 +51,7 @@ protected:
     int list_max_level;
 
     bool CoinFlip(SkipListNode<T> *) const;
-    bool AddElementAfterNode(T data, SkipListNode<T> *node);
+    bool AddElementAfterPosition(T data, SkipListLevelIterator position);
     SkipListLevelIterator FindNewElementPosition(T data);
 
 public:
