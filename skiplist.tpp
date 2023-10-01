@@ -174,14 +174,30 @@ SkipListLevelIterator<T> SkipList<T>::FindNewElementPosition(T data)
 template <typename T>
 bool SkipList<T>::RemoveElement(T data)
 {
-    if (Find(data))
+    auto it = Find(data);
+    if ((it == head[0].level.end()) || ((*it)->data != data))
     {
         // Element not in the list. Nothing to remove
+        std::cout << "Element " << data << " not in the list. Nothing to remove" << std::endl;
         return true;
     }
 
-    // Remove the element from each level of the skiplist it is in
-    return false;
+    SkipListNode<T> *node = *it;
+
+    // Remove the element information from each level of the skiplist it is in
+    for (int i = 0; i < list_max_level; i++)
+    {
+        auto level_it = node->vertical_navigation[i];
+        if (level_it != head[i].level.end())
+        {
+            head[i].level.erase(level_it);
+        }
+    }
+
+    delete node;
+    std::cout << "Element " << data << " removed" << std::endl;
+
+    return true;
 }
 
 /**
@@ -194,7 +210,7 @@ bool SkipList<T>::RemoveElement(T data)
  * @throws None
  */
 template <typename T>
-bool SkipList<T>::Find(T data)
+SkipListLevelIterator<T> SkipList<T>::Find(T data)
 {
     // The level 0 holds all the list elements in the skiplist. Find the element in the skip
     // list means fiding the element in the first level
@@ -202,7 +218,8 @@ bool SkipList<T>::Find(T data)
     // Binary search using custom comparison function
     auto it = std::lower_bound(head[0].level.begin(), head[0].level.end(), data, custom_compare<T>);
     // Check if the element was found
-    return it != head[0].level.end() && (*it)->data == data;
+
+    return it;
 }
 
 /**
@@ -232,9 +249,12 @@ bool SkipList<T>::CoinFlip(SkipListNode<T> *) const
 template <typename T>
 bool SkipList<T>::AddElement(T data)
 {
-    if (Find(data))
+    // Check if the element already exists
+    auto it = Find(data);
+    if (it != head[0].level.end() && (*it)->data == data)
     {
         // Element already exists in the list. Nothing to insert
+        std::cout << "Element " << data << " already in the list" << std::endl;
         return false;
     }
 
