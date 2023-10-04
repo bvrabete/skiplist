@@ -113,7 +113,7 @@ bool SkipList<T>::AddElementAfterPosition(T data, SkipListLevelIterator position
 template <typename T>
 SkipListLevelIterator<T> SkipList<T>::FindNewElementPosition(T data)
 {
-    int level_id = head.size() - 1;
+    auto level_id = head.size() - 1;
     if (level_id < 0)
     {
         // Head is empty
@@ -153,7 +153,10 @@ SkipListLevelIterator<T> SkipList<T>::FindNewElementPosition(T data)
         else
         {
             insertAfter = head_it->level.begin();
-            start = std::next(head_it)->level.begin();
+            if (head_it != head.rbegin())
+            {
+                start = (std::prev(head_it))->level.begin();
+            }
         }
 
         level_id--;

@@ -64,6 +64,11 @@ out/*
 # Visual Studio and Visual Studio Code
 .vs/*
 .vscode/*
+/Debug
+/Release
+*.filters
+*.user
 
 # ctest temporary folders 
 Testing/Temporary/*
+/skip_list.dir/**/*
